@@ -18,7 +18,13 @@ type contactList struct {
 
 type csvTemplate []string
 
-var templateHeaders = csvTemplate{"Name", "Number"}
+var (
+	templateHeaders = csvTemplate{"Name", "Number"}
+	accountSid      = os.Getenv("TWILIO_SID")
+	authToken       = os.Getenv("TWILIO_AUTH")
+	twilioNumber    = os.Getenv("TWILIO_FROM")
+	urlStr          = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
+)
 
 // template produces a uploadable csv template
 // for a user to fill in and upload to trigger a mass text
@@ -43,17 +49,11 @@ func (c csvTemplate) produceTemplate() {
 // sendText takes a message string and texts the Name/Number
 // from a populated contactList struct
 func (c contactList) sendText(message string) {
-	accountSid := os.Getenv("TWILIO_SID")
-	authToken := os.Getenv("TWILIO_AUTH")
-	toNumber := c.Number
-	twilioNumber := os.Getenv("TWILIO_FROM")
-
-	urlStr := "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
 
 	// set url values struct to encode
 	// for post request to twilio api
 	v := url.Values{}
-	v.Set("To", toNumber)
+	v.Set("To", c.Number)
 	v.Set("From", twilioNumber)
 	v.Set("Body", message)
 
@@ -78,7 +78,7 @@ func (c contactList) sendText(message string) {
 
 	defer resp.Body.Close()
 
-	fmt.Println("Message Sent", resp.Status)
+	fmt.Println("Message Sent Status:", resp.Status)
 }
 
 // populateTemplate returns a []contactList
