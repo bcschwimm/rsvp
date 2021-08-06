@@ -4,12 +4,14 @@
 #### TODO:
 [x] Template to download / upload for numbers and message to text
 
-2) Complete contactList struct sendText and ignore first row of template
+[x] Complete contactList struct sendText
 
-3) Mongo setup for response storage
+3) Send Text Loop should ignore first value in contactList struct
 
-4) Command line implementation rsvp -template /path/tofile.csv -message "HI"
+4) Mongo setup for response storage
 
-5) Handle bad input and test
+5) Command line implementation rsvp -template /path/tofile.csv -message "HI"
 
-6) Reminder feature / ability to request address / details ?
+6) Handle bad input and test
+
+7) Reminder feature / ability to request address / details ?
