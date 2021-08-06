@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
+	"strings"
 )
 
 type contactList struct {
@@ -22,7 +25,7 @@ var templateHeaders = csvTemplate{"Name", "Number"}
 func (c csvTemplate) produceTemplate() {
 	file, err := os.Create("template.csv")
 	if err != nil {
-		fmt.Println("Error Generating Template:", err)
+		fmt.Println("Error: Generating Template:", err)
 	}
 	defer file.Close()
 
@@ -32,15 +35,50 @@ func (c csvTemplate) produceTemplate() {
 	// write takes a []string to write each line
 	err = writer.Write(c)
 	if err != nil {
-		fmt.Println("Error Writing Headers to Template", err)
+		fmt.Println("Error: Writing Headers to Template", err)
 	}
 	fmt.Println("Template Generated")
 }
 
-// sendText takes a message string and texts each Name/Number
+// sendText takes a message string and texts the Name/Number
 // from a populated contactList struct
 func (c contactList) sendText(message string) {
-	fmt.Println(message, "WIP")
+	accountSid := os.Getenv("TWILIO_SID")
+	authToken := os.Getenv("TWILIO_AUTH")
+	toNumber := c.Number
+	twilioNumber := os.Getenv("TWILIO_FROM")
+
+	urlStr := "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
+
+	// set url values struct to encode
+	// for post request to twilio api
+	v := url.Values{}
+	v.Set("To", toNumber)
+	v.Set("From", twilioNumber)
+	v.Set("Body", message)
+
+	rb := *strings.NewReader(v.Encode())
+	client := &http.Client{}
+
+	req, err := http.NewRequest("POST", urlStr, &rb)
+	if err != nil {
+		fmt.Println("Error: Twilio Post Request", err)
+	}
+
+	defer req.Body.Close()
+
+	req.SetBasicAuth(accountSid, authToken)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error: Sending HTTP Request", err)
+	}
+
+	defer resp.Body.Close()
+
+	fmt.Println("Message Sent", resp.Status)
 }
 
 // populateTemplate returns a []contactList
@@ -48,7 +86,7 @@ func (c contactList) sendText(message string) {
 func populateTemplate(fileName string) (data []contactList) {
 	file, err := os.Open(fileName)
 	if err != nil {
-		fmt.Println("Error opening file template.csv", err)
+		fmt.Println("Error: opening file template.csv", err)
 	}
 
 	r := csv.NewReader(file)
