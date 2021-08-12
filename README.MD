@@ -6,7 +6,7 @@
 
 [x] Complete contactList struct sendText
 
-3) Send Text Loop should ignore first value in contactList struct
+[x] Send Text Loop should ignore first value in contactList struct
 
 4) Mongo setup for response storage
 

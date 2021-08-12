@@ -85,8 +85,9 @@ func (c contactList) sendText(message string) {
 	fmt.Println("Message Sent Status:", resp.Status)
 }
 
-// populateTemplate returns a []contactList
-// populated with Name,Number data to text message
+// populateTemplate returns a []contactList populated
+// with Name,Number data to text message and skipping
+// the first row which is simply name, number headers
 func populateTemplate(fileName string) (data []contactList) {
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -108,7 +109,7 @@ func populateTemplate(fileName string) (data []contactList) {
 		}
 		data = append(data, rowData)
 	}
-	return
+	return data[1:]
 }
 
 func main() {
