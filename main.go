@@ -28,6 +28,8 @@ var (
 	urlStr       = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
 )
 
+const helpMessage = "Enter -u /filepath/to/template.csv to upload a template and message all users\nEnter -d to download a blank template"
+
 // template produces a uploadable csv template
 // for a user to fill in and upload to trigger a mass text
 func (c csvTemplate) produceTemplate() {
@@ -110,6 +112,18 @@ func populateTemplate(fileName string) (data []contactList) {
 }
 
 func main() {
-	d := populateTemplate("template.csv")
-	fmt.Println(d)
+
+	if len(os.Args) == 1 {
+		fmt.Println(helpMessage)
+	} else {
+		switch userChoice := os.Args[1]; userChoice {
+		case "-d":
+			templateHeaders.produceTemplate()
+		case "-u":
+			d := populateTemplate(os.Args[2])
+			fmt.Println(d)
+		default:
+			fmt.Println(helpMessage)
+		}
+	}
 }
