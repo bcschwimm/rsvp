@@ -14,4 +14,4 @@
 
 6) Handle bad input and test
 
-7) Reminder feature / ability to request address / details ?
+7) Reminder feature / ability to request address / details?

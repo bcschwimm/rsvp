@@ -121,7 +121,7 @@ func main() {
 		case "-d":
 			templateHeaders.produceTemplate()
 		case "-u":
-			// add an option for user message as well for sendText method
+			// add an option for user message for sendText method
 			d := populateTemplate(os.Args[2])
 			fmt.Println(d)
 		default:
