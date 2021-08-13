@@ -28,7 +28,7 @@ var (
 	urlStr       = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
 )
 
-const helpMessage = "Enter -u /filepath/to/template.csv to upload a template and message all users\nEnter -d to download a blank template"
+const helpMessage = "Enter upload /filepath/to/template.csv to upload a template and message all users\nEnter download to download a blank template"
 
 // template produces a uploadable csv template
 // for a user to fill in and upload to trigger a mass text
@@ -118,9 +118,9 @@ func main() {
 		fmt.Println(helpMessage)
 	} else {
 		switch userChoice := os.Args[1]; userChoice {
-		case "-d":
+		case "download":
 			templateHeaders.produceTemplate()
-		case "-u":
+		case "upload":
 			// add an option for user message for sendText method
 			d := populateTemplate(os.Args[2])
 			fmt.Println(d)
